@@ -1,5 +1,5 @@
 {
-  "name": "my-new-project",
+  "name": "app",
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "scripts": {
