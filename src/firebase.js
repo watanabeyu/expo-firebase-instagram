@@ -264,6 +264,47 @@ class Firebase {
       return { error: message };
     }
   }
+
+  getNotifications = async (cursor = null, num = 20) => {
+    let ref = this.notification.where('uid', '==', this.uid).orderBy('timestamp', 'desc').limit(num);
+
+    try {
+      if (cursor) {
+        ref = ref.startAfter(cursor);
+      }
+
+      const querySnapshot = await ref.get();
+      const data = [];
+      await Promise.all(querySnapshot.docs.map(async (doc) => {
+        if (doc.exists) {
+          const notification = doc.data() || {};
+
+          const fromUser = await notification.from.get().then(res => res.data());
+          const post = await notification.post.get().then(res => res.data());
+
+          data.push({
+            key: doc.id,
+            from: {
+              uid: notification.from.id,
+              name: fromUser.name,
+              img: fromUser.img,
+            },
+            post: {
+              pid: notification.post.id,
+              fileUri: post.fileUri,
+              type: post.type,
+            },
+          });
+        }
+      }));
+
+      const lastVisible = querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length - 1] : null;
+
+      return { data, cursor: lastVisible };
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
 }
 
 const fire = new Firebase(Constants.manifest.extra.firebase);
