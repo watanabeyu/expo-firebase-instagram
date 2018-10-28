@@ -8,9 +8,8 @@ import {
 /* from app */
 import fonts from 'app/src/fonts';
 import images from 'app/src/images';
-import AppNavigator from 'app/src/navigation/AppNavigator';
-import Navigation from 'app/src';
 import firebase from 'app/src/firebase';
+import Navigation from 'app/src';
 
 export default class App extends React.Component {
   static defaultProps = {
