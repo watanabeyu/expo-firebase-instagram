@@ -12,6 +12,7 @@ import { WebBrowser } from 'expo';
 import FlatList from 'app/src/components/FlatList';
 import Item from 'app/src/components/Item';
 import Text from 'app/src/components/Text';
+import firebase from 'app/src/firebase';
 import styles from './styles';
 
 export default class HomeScreen extends React.Component {
@@ -23,32 +24,51 @@ export default class HomeScreen extends React.Component {
     super(props);
 
     this.state = {
-      posts: [
-        {
-          text: '1つ目の投稿です。 #tag1',
-          fileUri: 'https://dummyimage.com/400x400/000/fff.png&text=Post1',
-          user: {
-            uid: 1,
-            img: 'https://dummyimage.com/40x40/fff/000.png&text=User1',
-            name: 'User1',
-          },
-        },
-      ],
+      posts: [],
       fetching: false,
       loading: false,
     };
   }
 
+  async componentDidMount() {
+    await this.getPosts();
+  }
+
+  async componentDidUpdate(prevProps) {
+    const { isFocused } = this.props;
+
+    if (!prevProps.isFocused && isFocused && prevProps.currentScreen === 'TakePublish') {
+      await this.getPosts();
+    }
+  }
+
+  getPosts = async (cursor = null) => {
+    this.setState({ fetching: true });
+
+    const response = await firebase.getPosts(cursor);
+
+    if (!response.error) {
+      const { posts } = this.state;
+
+      this.setState({
+        posts: cursor ? posts.concat(response.data) : response.data,
+        cursor: response.cursor,
+      });
+    }
+
+    this.setState({ fetching: false });
+  }
+
   onUserPress = (item) => {
-    // ここにUserScreenに遷移する処理を書きます。
+    const { navigation } = this.props;
+
+    navigation.push('User', { uid: item.user.uid });
   }
 
   onMorePress = (item) => {
-    // ここに投稿の共有をする処理を書きます。
-  }
-
-  onLikePress = async (item) => {
-    // ここにいいねの処理を書きます。
+    Share.share({
+      message: item.fileUri,
+    });
   }
 
   onLinkPress = (url, txt) => {
@@ -61,6 +81,26 @@ export default class HomeScreen extends React.Component {
       default:
         WebBrowser.openBrowserAsync(url);
         break;
+    }
+  }
+
+  onLikePress = async (item) => {
+    // ここにいいねの処理を書きます。
+  }
+
+  onRefresh = async () => {
+    this.setState({ cursor: null });
+
+    await this.getPosts();
+  }
+
+  onEndReached = async () => {
+    const { cursor, loading } = this.state;
+
+    if (!loading && cursor) {
+      this.setState({ loading: true });
+      await this.getPosts(cursor);
+      this.setState({ loading: false });
     }
   }
 
@@ -86,6 +126,14 @@ export default class HomeScreen extends React.Component {
         <FlatList
           data={posts}
           keyExtractor={item => item.key}
+          refreshControl={(
+            <RefreshControl
+              refreshing={fetching}
+              onRefresh={this.onRefresh}
+            />
+          )}
+          onEndReachedThreshold={0.1}
+          onEndReached={this.onEndReached}
           renderItem={({ item, index, viewableItemIndices }) => (
             <Item
               {...item}
