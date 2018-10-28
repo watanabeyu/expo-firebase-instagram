@@ -220,6 +220,18 @@ class Firebase {
       return { error: message };
     }
   }
+
+  getTags = async (keyword = null) => {
+    const strlength = keyword.length;
+    const strFrontCode = keyword.slice(0, strlength - 1);
+    const strEndCode = keyword.slice(strlength - 1, keyword.length);
+
+    const startcode = keyword;
+    const endcode = strFrontCode + String.fromCharCode(strEndCode.charCodeAt(0) + 1);
+
+    const querySnapshot = await this.tag.where('name', '>=', startcode).where('name', '<', endcode).get();
+    return querySnapshot.docs.map(doc => ({ name: doc.id, key: doc.id }));
+  }
 }
 
 const fire = new Firebase(Constants.manifest.extra.firebase);
