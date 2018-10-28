@@ -18,6 +18,8 @@ class Firebase {
     firebase.firestore().settings({ timestampsInSnapshots: true });
 
     this.user = firebase.firestore().collection('user');
+    this.post = firebase.firestore().collection('post');
+    this.tag = firebase.firestore().collection('tag');
   }
 
   init = async () => new Promise(resolve => firebase.auth().onAuthStateChanged(async (user) => {
@@ -83,6 +85,37 @@ class Firebase {
       });
 
       return remoteUri;
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
+
+  createPost = async (text = '', file = '', type = 'photo') => {
+    try {
+      const remoteUri = await this.uploadFileAsync(file.uri);
+      const tags = text.match(/[#]{0,2}?(w*[一-龠_ぁ-ん_ァ-ヴーａ-ｚＡ-Ｚa-zA-Z0-9]+|[a-zA-Z0-9_]+|[a-zA-Z0-9_]w*)/gi);
+
+      await this.post.add({
+        text,
+        timestamp: Date.now(),
+        type,
+        fileWidth: (type === 'photo') ? file.width : null,
+        fileHeight: (type === 'photo') ? file.height : null,
+        fileUri: remoteUri,
+        user: this.user.doc(`${this.uid}`),
+        tag: tags ? tags.reduce((acc, cur) => { acc[cur.replace(/#/, '')] = Date.now(); return acc; }, {}) : null,
+      });
+
+      if (tags) {
+        await Promise.all(tags.map((tag) => {
+          const t = tag.replace(/^#/, '');
+          this.tag.doc(t).set({
+            name: t,
+          });
+        }));
+      }
+
+      return true;
     } catch ({ message }) {
       return { error: message };
     }

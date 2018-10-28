@@ -11,6 +11,7 @@ import { Video } from 'expo';
 
 /* from app */
 import IconButton from 'app/src/components/IconButton';
+import firebase from 'app/src/firebase';
 import styles from './styles';
 
 export default class TakePublishScreen extends React.Component {
@@ -51,8 +52,33 @@ export default class TakePublishScreen extends React.Component {
   }
 
   onPublish = async () => {
-    // ここに投稿の処理を書きます。
+    const {
+      mode,
+      photo,
+      movie,
+      text,
+    } = this.state;
+    const { navigation } = this.props;
+
+    Keyboard.dismiss();
+
+    navigation.setParams({
+      headerRight: <IconButton name="ios-refresh" />,
+    });
+
+    const result = await firebase.createPost(text, mode === 'photo' ? photo : movie, mode);
+
+    navigation.setParams({
+      headerRight: <IconButton name="ios-send" onPress={this.onPublish} />,
+    });
+
+    if (result.error) {
+      Alert.alert('TakePublish.alert', result.error);
+    } else {
+      navigation.dispatch({ type: 'TAKEMODAL_CLOSE' });
+    }
   }
+
 
   render() {
     const {
