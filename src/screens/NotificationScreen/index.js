@@ -16,6 +16,7 @@ import { Image } from 'react-native-expo-image-cache';
 import Avatar from 'app/src/components/Avatar';
 import FlatList from 'app/src/components/FlatList';
 import Text from 'app/src/components/Text';
+import firebase from 'app/src/firebase';
 import styles from './styles';
 
 export default class NotificationScreen extends React.Component {
@@ -27,43 +28,55 @@ export default class NotificationScreen extends React.Component {
     super(props);
 
     this.state = {
-      notifications: [
-        {
-          post: {
-            type: 'photo',
-            fileUri: 'https://dummyimage.com/400x400/000/fff.png&text=Post1',
-          },
-          from: {
-            img: 'https://dummyimage.com/40x40/fff/000.png&text=User1',
-            name: 'User1',
-          },
-        },
-        {
-          post: {
-            type: 'photo',
-            fileUri: 'https://dummyimage.com/400x400/000/fff.png&text=Post2',
-          },
-          from: {
-            img: 'https://dummyimage.com/40x40/fff/000.png&text=User1',
-            name: 'User1',
-          },
-        },
-        {
-          post: {
-            type: 'photo',
-            fileUri: 'https://dummyimage.com/400x400/000/fff.png&text=Post3',
-          },
-          from: {
-            img: 'https://dummyimage.com/40x40/fff/000.png&text=User1',
-            name: 'User1',
-          },
-        },
-      ],
+      notifications: [],
       cursor: null,
       fetching: false,
       loading: false,
     };
   }
+
+  async componentDidMount() {
+    Notifications.setBadgeNumberAsync(0);
+
+    await this.getNotifications();
+  }
+
+  getNotifications = async (cursor = null) => {
+    this.setState({ fetching: true });
+
+    const response = await firebase.getNotifications(cursor);
+
+    if (!response.error) {
+      const { notifications } = this.state;
+
+      this.setState({
+        notifications: cursor ? notifications.concat(response.data) : response.data,
+        cursor: response.cursor,
+      });
+    } else {
+      console.log(response);
+      alert(response.error);
+    }
+
+    this.setState({ fetching: false });
+  }
+
+  onRefresh = async () => {
+    this.setState({ cursor: null });
+
+    await this.getNotifications();
+  }
+
+  onEndReached = async () => {
+    const { cursor, loading } = this.state;
+
+    if (!loading && cursor) {
+      this.setState({ loading: true });
+      await this.getNotifications(cursor);
+      this.setState({ loading: false });
+    }
+  }
+
 
   onUserPress = (item) => {
     const { navigation } = this.props;
