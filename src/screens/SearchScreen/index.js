@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-navigation';
 /* from app */
 import FlatList from 'app/src/components/FlatList';
 import Text from 'app/src/components/Text';
+import firebase from 'app/src/firebase';
 import styles from './styles';
 
 export default class SearchScreen extends React.Component {
@@ -26,12 +27,32 @@ export default class SearchScreen extends React.Component {
     };
   }
 
+  getTags = async () => {
+    const { keyword } = this.state;
+
+    const response = await firebase.getTags(keyword.replace(/^#/, ''));
+
+    if (!response.error) {
+      this.setState({
+        tags: response,
+      });
+    }
+  }
+
   onChangeText = (text) => {
-    // ここに検索文字列が変化した際の処理を書きます。
+    clearTimeout(this.interval);
+
+    this.setState({ keyword: text.replace(/^#/, ''), searching: true });
+
+    this.interval = setTimeout(async () => {
+      this.setState({ searching: false });
+      await this.getTags();
+    }, 1500);
   }
 
   onRowPress = (item) => {
-    // ここにTagScreenを開く処理を記述します。
+    const { navigation } = this.props;
+    navigation.push('Tag', { tag: `#${item.name}` });
   }
 
   render() {
