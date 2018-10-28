@@ -8,7 +8,7 @@ import {
 /* from app */
 import fonts from 'app/src/fonts';
 import images from 'app/src/images';
-import MainTabNavigator from 'app/src/navigation/MainTabNavigator';
+import AppNavigator from 'app/src/navigation/AppNavigator';
 
 export default class App extends React.Component {
   static defaultProps = {
@@ -46,7 +46,7 @@ export default class App extends React.Component {
       );
     }
     return (
-      <MainTabNavigator />
+      <AppNavigator />
     );
   }
 }
