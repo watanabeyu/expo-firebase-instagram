@@ -26,6 +26,7 @@ export default class App extends React.Component {
   }
 
   loadResourcesAsync = async () => {
+    await firebase.init();
     /* asset */
     await Asset.loadAsync(Object.keys(images).map(key => images[key]));
     /* font */
