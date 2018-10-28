@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { Constants } from 'expo';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
@@ -34,6 +35,58 @@ class Firebase {
 
     resolve(this.uid);
   }))
+
+  getUser = async (uid = null) => {
+    const userId = (!uid) ? this.uid : uid;
+
+    try {
+      const user = await this.user.doc(userId).get().then(res => res.data());
+
+      return {
+        uid: userId,
+        name: user.name,
+        img: user.img,
+      };
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
+
+  uploadFileAsync = async (uri) => {
+    const ext = uri.split('.').slice(-1)[0];
+    const path = `file/${this.uid}/${uuid.v4()}.${ext}`;
+
+    return new Promise(async (resolve, reject) => {
+      const blob = await fetch(uri).then(response => response.blob());
+
+      const ref = firebase.storage().ref(path);
+      const unsubscribe = ref.put(blob).on('state_changed',
+        (state) => { },
+        (err) => {
+          unsubscribe();
+          reject(err);
+        },
+        async () => {
+          unsubscribe();
+          const url = await ref.getDownloadURL();
+          resolve(url);
+        });
+    });
+  }
+
+  changeUserImg = async (file = '') => {
+    try {
+      const remoteUri = await this.uploadFileAsync(file.uri);
+
+      this.user.doc(`${this.uid}`).update({
+        img: remoteUri,
+      });
+
+      return remoteUri;
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
 }
 
 const fire = new Firebase(Constants.manifest.extra.firebase);
