@@ -181,6 +181,45 @@ class Firebase {
       return { error: message };
     }
   }
+
+  getThumbnails = async ({ uid = null, tag = null }, cursor = null, num = 10) => {
+    let ref;
+
+    if (uid) {
+      ref = this.post.where('user', '==', this.user.doc(uid)).orderBy('timestamp', 'desc').limit(num);
+    } else if (tag) {
+      ref = this.post.where(`tag.${tag.replace(/#/, '')}`, '>', 0).orderBy(`tag.${tag.replace(/#/, '')}`, 'desc').limit(num);
+    } else {
+      return { data: null, cursor: null };
+    }
+
+    try {
+      if (cursor) {
+        ref = ref.startAfter(cursor);
+      }
+
+      const querySnapshot = await ref.get();
+      const data = [];
+      await Promise.all(querySnapshot.docs.map(async (doc) => {
+        if (doc.exists) {
+          const post = doc.data() || {};
+
+          data.push({
+            key: doc.id,
+            pid: doc.id,
+            thumbnail: post.fileUri,
+            type: post.type,
+          });
+        }
+      }));
+
+      const lastVisible = querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length - 1] : null;
+
+      return { data, cursor: lastVisible };
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
 }
 
 const fire = new Firebase(Constants.manifest.extra.firebase);
