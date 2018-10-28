@@ -16,6 +16,7 @@ import Avatar from 'app/src/components/Avatar';
 import FlatList from 'app/src/components/FlatList';
 import Text from 'app/src/components/Text';
 import styles from './styles';
+import firebase from 'app/src/firebase';
 
 @connect(state => ({
   me: state.me,
@@ -27,15 +28,7 @@ export default class UserScreen extends React.Component {
 
   constructor(props) {
     super(props);
-
-    // TODO: Firestoreから受け取る値と入れ替える
-    const me = {
-      uid: 1,
-      img: 'https://dummyimage.com/40x40/fff/000.png&text=User1',
-      name: 'User1',
-    }
-    const { navigation } = this.props;
-    // const { me, navigation } = this.props;
+    const { me, navigation } = this.props;
     const uid = navigation.getParam('uid', me.uid);
 
     this.state = {
@@ -54,14 +47,7 @@ export default class UserScreen extends React.Component {
 
   async componentDidMount() {
     const { self } = this.state;
-    // TODO: Firestoreから受け取る値と入れ替える
-    const me = {
-      uid: 1,
-      img: 'https://dummyimage.com/40x40/fff/000.png&text=User1',
-      name: 'User1',
-    }
-    const { navigation } = this.props;
-    // const { me, navigation } = this.props;
+    const { me, navigation } = this.props;
 
     if (self) {
       await this.setState({ user: me });
@@ -87,7 +73,26 @@ export default class UserScreen extends React.Component {
   }
 
   onUserPress = async () => {
-    // ここにユーザー画像変更の処理を書きます。
+    const { me, dispatch } = this.props;
+
+    const permissions = Permissions.CAMERA_ROLL;
+    const { status } = await Permissions.askAsync(permissions);
+
+    if (status) {
+      const photo = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+
+      if (!photo.cancelled) {
+        const response = await firebase.changeUserImg(photo);
+        if (!response.error) {
+          dispatch({
+            type: 'ME_SET', payload: { ...me, img: photo.uri },
+          });
+        }
+      }
+    }
   }
 
   onThumbnailPress = (item) => {

@@ -7,6 +7,7 @@ import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 
 /* from app */
 import AppNavigator from 'app/src/navigation/AppNavigator';
+import firebase from 'app/src/firebase';
 
 const App = reduxifyNavigator(AppNavigator, 'root');
 
@@ -24,6 +25,12 @@ export default class AppWithNavigationState extends React.Component {
 
   async componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
+
+    const me = await firebase.getUser();
+
+    const { dispatch } = this.props;
+    dispatch({ type: 'ME_SET', payload: me });
+    this.setState({ loading: false });
   }
 
   componentWillUnmount() {
