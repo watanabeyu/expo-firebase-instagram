@@ -61,6 +61,7 @@ export default class UserScreen extends React.Component {
       await this.setState({ user });
       navigation.setParams({ title: user.name });
     }
+    await this.getPosts();
   }
 
   componentDidUpdate(prevProps) {
@@ -101,6 +102,44 @@ export default class UserScreen extends React.Component {
     navigation.push('Post', { pid: item.pid });
   }
 
+  getPosts = async (cursor = null) => {
+    const { user } = this.state;
+
+    this.setState({ fetching: true });
+
+    const response = await firebase.getThumbnails({ uid: user.uid }, cursor);
+
+    if (!response.error) {
+      const { posts } = this.state;
+
+      this.setState({
+        posts: cursor ? posts.concat(response.data) : response.data,
+        cursor: response.cursor,
+      });
+    } else {
+      console.log(response.error);
+      alert(response.error);
+    }
+
+    this.setState({ fetching: false });
+  }
+
+  onRefresh = async () => {
+    this.setState({ cursor: null });
+
+    await this.getPosts();
+  }
+
+  onEndReached = async () => {
+    const { cursor, loading } = this.state;
+
+    if (!loading && cursor) {
+      this.setState({ loading: true });
+      await this.getPosts(cursor);
+      this.setState({ loading: false });
+    }
+  }
+
   render() {
     const {
       self,
@@ -117,6 +156,14 @@ export default class UserScreen extends React.Component {
           numColumns={3}
           data={posts}
           keyExtractor={item => item.key}
+          refreshControl={(
+            <RefreshControl
+              refreshing={fetching}
+              onRefresh={this.onRefresh}
+            />
+          )}
+          onEndReachedThreshold={0.1}
+          onEndReached={this.onEndReached}
           ListHeaderComponent={() => (
             <View style={styles.header}>
               {!self && <Avatar uri={user.img} size={60} style={styles.avatar} />}
