@@ -20,6 +20,7 @@ class Firebase {
     this.user = firebase.firestore().collection('user');
     this.post = firebase.firestore().collection('post');
     this.tag = firebase.firestore().collection('tag');
+    this.notification = firebase.firestore().collection('notification');
   }
 
   init = async () => new Promise(resolve => firebase.auth().onAuthStateChanged(async (user) => {
@@ -231,6 +232,37 @@ class Firebase {
 
     const querySnapshot = await this.tag.where('name', '>=', startcode).where('name', '<', endcode).get();
     return querySnapshot.docs.map(doc => ({ name: doc.id, key: doc.id }));
+  }
+
+  likePost = async (item = {}) => {
+    try {
+      let liked = true;
+      await this.user.doc(`${this.uid}`).collection('liked').doc(`${item.pid}`).get()
+        .then(async (doc) => {
+          if (!doc.exists) {
+            this.user.doc(`${this.uid}`).collection('liked').doc(`${item.pid}`).set({ timestamp: Date.now() });
+            this.notification.add({
+              type: 'like',
+              uid: item.user.uid,
+              post: this.post.doc(`${item.pid}`),
+              from: this.user.doc(`${this.uid}`),
+              timestamp: Date.now(),
+            });
+
+            liked = true;
+          } else {
+            this.user.doc(`${this.uid}`).collection('liked').doc(`${item.pid}`).delete();
+            const querySnapshot = await this.notification.where('type', '==', 'like').where('post', '==', this.post.doc(`${item.pid}`)).where('from', '==', this.user.doc(`${this.uid}`)).get();
+            await Promise.all(querySnapshot.docs.map(async (d) => { await d.ref.delete(); }));
+
+            liked = false;
+          }
+        });
+
+      return liked;
+    } catch ({ message }) {
+      return { error: message };
+    }
   }
 }
 

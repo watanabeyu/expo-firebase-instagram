@@ -85,7 +85,14 @@ export default class HomeScreen extends React.Component {
   }
 
   onLikePress = async (item) => {
-    // ここにいいねの処理を書きます。
+    const { posts } = this.state;
+
+    const response = await firebase.likePost(item);
+    if (!response.error) {
+      this.setState({
+        posts: posts.map(post => Object.assign({}, post, { liked: (post.pid === item.pid) ? response : post.liked })),
+      });
+    }
   }
 
   onRefresh = async () => {
