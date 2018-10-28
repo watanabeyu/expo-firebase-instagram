@@ -29,7 +29,15 @@
     "primaryColor": "#000",
     "extra": {
       "backgroundColor": "#fafafa",
-      "textColor": "#454545"
+      "textColor": "#454545",
+      "firebase": {
+        "apiKey": "xxxxxxxxxxxxxx",
+        "authDomain": "xxxxxxxxxxxxxx",
+        "databaseURL": "xxxxxxxxxxxxxx",
+        "projectId": "xxxxxxxxxxxxxx",
+        "storageBucket": "xxxxxxxxxxxxxx",
+        "messagingSenderId": "xxxxxxxxxxxxxx"
+      }
     }
   }
 }
