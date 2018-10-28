@@ -9,6 +9,7 @@ import {
 import fonts from 'app/src/fonts';
 import images from 'app/src/images';
 import AppNavigator from 'app/src/navigation/AppNavigator';
+import Navigation from 'app/src';
 
 export default class App extends React.Component {
   static defaultProps = {
@@ -46,7 +47,7 @@ export default class App extends React.Component {
       );
     }
     return (
-      <AppNavigator />
+      <Navigation />
     );
   }
 }
