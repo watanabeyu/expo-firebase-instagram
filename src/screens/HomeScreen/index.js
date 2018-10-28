@@ -52,8 +52,16 @@ export default class HomeScreen extends React.Component {
   }
 
   onLinkPress = (url, txt) => {
-    // ここにタグをタップしたときはTagScreenに遷移する
-    // URLをタップしたときはブラウザで開く処理を書きます。
+    const { navigation } = this.props;
+
+    switch (txt[0]) {
+      case '#':
+        navigation.push('Tag', { tag: txt });
+        break;
+      default:
+        WebBrowser.openBrowserAsync(url);
+        break;
+    }
   }
 
   render() {
