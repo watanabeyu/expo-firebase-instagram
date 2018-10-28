@@ -120,6 +120,67 @@ class Firebase {
       return { error: message };
     }
   }
+
+  getPost = async (pid = '0') => {
+    try {
+      const post = await this.post.doc(pid).get().then(res => res.data());
+      const user = await post.user.get().then(res => res.data());
+
+      user.uid = post.user.id;
+      delete post.user;
+
+      const liked = await this.user.doc(`${this.uid}`).collection('liked').doc(pid).get()
+        .then(res => res.exists);
+
+      return {
+        pid,
+        ...post,
+        liked,
+        user,
+      };
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
+
+  getPosts = async (cursor = null, num = 5) => {
+    let ref = this.post.orderBy('timestamp', 'desc').limit(num);
+
+    try {
+      if (cursor) {
+        ref = ref.startAfter(cursor);
+      }
+
+      const querySnapshot = await ref.get();
+      const data = [];
+      await Promise.all(querySnapshot.docs.map(async (doc) => {
+        if (doc.exists) {
+          const post = doc.data() || {};
+
+          const user = await post.user.get().then(res => res.data());
+          user.uid = post.user.id;
+          delete post.user;
+
+          const liked = await this.user.doc(`${this.uid}`).collection('liked').doc(doc.id).get()
+            .then(res => res.exists);
+
+          data.push({
+            key: doc.id,
+            pid: doc.id,
+            user,
+            ...post,
+            liked,
+          });
+        }
+      }));
+
+      const lastVisible = querySnapshot.docs.length > 0 ? querySnapshot.docs[querySnapshot.docs.length - 1] : null;
+
+      return { data, cursor: lastVisible };
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
 }
 
 const fire = new Firebase(Constants.manifest.extra.firebase);
