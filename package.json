@@ -26,7 +26,8 @@
     "react-navigation-redux-helpers": "^2.0.8",
     "react-navigation-tabs": "^0.8.4",
     "react-redux": "^5.1.0",
-    "redux": "^4.0.1"
+    "redux": "^4.0.1",
+    "sentry-expo": "^1.9.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",

@@ -5,12 +5,19 @@ import {
   Asset,
   Font,
 } from 'expo';
+
+/* node_modules */
+import Sentry from 'sentry-expo';
+
 /* from app */
 import fonts from 'app/src/fonts';
 import images from 'app/src/images';
 import firebase from 'app/src/firebase';
 import Navigation from 'app/src';
 import Analytics from 'app/src/analytics';
+
+/* Sentry init */
+Sentry.config('https://xxxxxxxxxxxx@sentry.io/xxxxxxxxxx').install();
 
 export default class App extends React.Component {
   static defaultProps = {

@@ -39,6 +39,18 @@
         "storageBucket": "xxxxxxxxxxxxxx",
         "messagingSenderId": "xxxxxxxxxxxxxx"
       }
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "your team short name here",
+            "project": "your project short name here",
+            "authToken": "your auth token here"
+          }
+        }
+      ]
     }
   }
 }
