@@ -9,11 +9,13 @@ import { Camera, ImagePicker, Permissions } from 'expo';
 /* from app */
 import IconButton from 'app/src/components/IconButton';
 import Text from 'app/src/components/Text';
+import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
 import styles from './styles';
 
 export default class TakeScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
-    headerTitle: navigation.getParam('headerTitle', '写真'),
+    headerTitle: navigation.getParam('headerTitle', I18n.t('Take.tab2')),
     headerLeft: <IconButton name="md-close" size={28} onPress={() => navigation.dispatch(NavigationActions.back())} />,
   })
 
@@ -27,6 +29,8 @@ export default class TakeScreen extends React.Component {
       flashMode: Camera.Constants.FlashMode.off,
       isRecording: false,
     };
+
+    GA.ScreenHit('Take');
   }
 
   async componentDidMount() {
@@ -90,7 +94,7 @@ export default class TakeScreen extends React.Component {
     }
   }
 
-  onTabPress = async (mode = 'photo', headerTitle = '写真') => {
+  onTabPress = async (mode = 'photo', headerTitle = I18n.t('Take.tab2')) => {
     const { flashMode } = this.state;
     const { navigation } = this.props;
 
@@ -134,7 +138,7 @@ export default class TakeScreen extends React.Component {
     } if (hasCameraPermission === false) {
       return (
         <View style={[styles.container, styles.empty]}>
-          <Text font="noto-sans-bold" style={styles.emptyText}>カメラのアクセス権限がありません</Text>
+          <Text font="noto-sans-bold" style={styles.emptyText}>{I18n.t('Take.noPermission')}</Text>
         </View>
       );
     }
@@ -170,14 +174,14 @@ export default class TakeScreen extends React.Component {
           {mode === 'movie' && <TouchableOpacity style={[styles.takeButton, isRecording ? styles.takeButtonRecording : null]} onPress={this.onRecordPress} />}
         </View>
         <View style={styles.tabs}>
-          <TouchableOpacity style={styles.tab} onPress={() => this.onTabPress('library', 'ライブラリ')}>
-            <Text font="noto-sans-bold" style={[styles.tabText, (mode === 'library') ? styles.tabTextActive : null]}>ライブラリ</Text>
+          <TouchableOpacity style={styles.tab} onPress={() => this.onTabPress('library', I18n.t('Take.tab1'))}>
+            <Text font="noto-sans-bold" style={[styles.tabText, (mode === 'library') ? styles.tabTextActive : null]}>{I18n.t('Take.tab1')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.tab} onPress={() => this.onTabPress('photo', '写真')}>
-            <Text font="noto-sans-bold" style={[styles.tabText, (mode === 'photo') ? styles.tabTextActive : null]}>写真</Text>
+          <TouchableOpacity style={styles.tab} onPress={() => this.onTabPress('photo', I18n.t('Take.tab2'))}>
+            <Text font="noto-sans-bold" style={[styles.tabText, (mode === 'photo') ? styles.tabTextActive : null]}>{I18n.t('Take.tab2')}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.tab} onPress={() => this.onTabPress('movie', '動画')}>
-            <Text font="noto-sans-bold" style={[styles.tabText, (mode === 'movie') ? styles.tabTextActive : null]}>動画</Text>
+          <TouchableOpacity style={styles.tab} onPress={() => this.onTabPress('movie', I18n.t('Take.tab3'))}>
+            <Text font="noto-sans-bold" style={[styles.tabText, (mode === 'movie') ? styles.tabTextActive : null]}>{I18n.t('Take.tab3')}</Text>
           </TouchableOpacity>
         </View>
       </View>

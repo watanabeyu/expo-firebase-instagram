@@ -10,6 +10,8 @@ import { SafeAreaView } from 'react-navigation';
 import FlatList from 'app/src/components/FlatList';
 import Text from 'app/src/components/Text';
 import firebase from 'app/src/firebase';
+import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
 import styles from './styles';
 
 export default class SearchScreen extends React.Component {
@@ -25,6 +27,8 @@ export default class SearchScreen extends React.Component {
       tags: [],
       searching: false,
     };
+
+    GA.ScreenHit('Search');
   }
 
   getTags = async () => {
@@ -73,7 +77,7 @@ export default class SearchScreen extends React.Component {
                 <TextInput
                   style={styles.search}
                   value={keyword}
-                  placeholder="タグを入力して検索しましょう"
+                  placeholder={I18n.t('Search.placeholder')}
                   underlineColorAndroid="transparent"
                   onChangeText={this.onChangeText}
                   clearButtonMode="while-editing"
@@ -91,7 +95,7 @@ export default class SearchScreen extends React.Component {
                 </TouchableHighlight>
               );
             }}
-            ListFooterComponent={() => ((searching && keyword) ? <Text font="noto-sans-medium" style={styles.searching}>#{keyword}を検索中</Text> : null)}
+            ListFooterComponent={() => ((searching && keyword) ? <Text font="noto-sans-medium" style={styles.searching}>#{keyword}{I18n.t('Search.searching')}</Text> : null)}
           />
         </View>
       </SafeAreaView>

@@ -9,6 +9,7 @@ import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 /* from app */
 import AppNavigator from 'app/src/navigation/AppNavigator';
 import firebase from 'app/src/firebase';
+import I18n from 'app/src/i18n';
 
 const App = reduxifyNavigator(AppNavigator, 'root');
 
@@ -73,8 +74,8 @@ export default class AppWithNavigationState extends React.Component {
       }
     } else if (notification.origin === 'received') {
       Alert.alert(
-        "新しい通知があります",
-        "今すぐ確認しますか？",
+        I18n.t('Root.notification'),
+        I18n.t('Root.message'),
         [
           { text: 'No', style: 'cancel' },
           {

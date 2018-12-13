@@ -17,11 +17,13 @@ import Avatar from 'app/src/components/Avatar';
 import FlatList from 'app/src/components/FlatList';
 import Text from 'app/src/components/Text';
 import firebase from 'app/src/firebase';
+import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
 import styles from './styles';
 
 export default class NotificationScreen extends React.Component {
   static navigationOptions = () => ({
-    headerTitle: '通知',
+    headerTitle: I18n.t('Notification.title'),
   })
 
   constructor(props) {
@@ -33,6 +35,8 @@ export default class NotificationScreen extends React.Component {
       fetching: false,
       loading: false,
     };
+
+    GA.ScreenHit('Notification');
   }
 
   async componentDidMount() {
@@ -103,7 +107,7 @@ export default class NotificationScreen extends React.Component {
           style={styles.container}
           contentContainerStyle={[styles.container, styles.empty]}
         >
-          <Text font="noto-sans-bold" style={styles.emptyText}>通知はありません</Text>
+          <Text font="noto-sans-bold" style={styles.emptyText}>{I18n.t('Notification.noNotifications')}</Text>
         </ScrollView>
       );
     }
@@ -119,7 +123,7 @@ export default class NotificationScreen extends React.Component {
                 <TouchableOpacity style={styles.avatar} onPress={() => this.onUserPress(item)}>
                   <Avatar uri={item.from.img} />
                 </TouchableOpacity>
-                <Text style={styles.message}>{item.from.name}がいいねしました</Text>
+                <Text style={styles.message}>{item.from.name}{I18n.t('Notification.message')}</Text>
                 <TouchableOpacity onPress={() => this.onFilePress(item)}>
                   {item.post.type === 'photo' && <Image uri={item.post.fileUri} style={styles.file} resizeMode="cover" />}
                   {item.post.type === 'movie' && (

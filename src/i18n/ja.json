@@ -1,0 +1,44 @@
+{
+  "Root": {
+    "notification": "新しい通知があります",
+    "message": "今すぐ確認しますか？"
+  },
+  "Home": {
+    "title": "フィード",
+    "noPosts": "投稿はありません"
+  },
+  "Notification": {
+    "title": "通知",
+    "noNotifications": "通知はありません",
+    "message": "がいいねしました"
+  },
+  "Take": {
+    "tab1": "ライブラリ",
+    "tab2": "写真",
+    "tab3": "動画",
+    "noPermission": "カメラのアクセス権限がありません"
+  },
+  "TakePublish": {
+    "title": "投稿する",
+    "placeholder": "テキストを入力してください",
+    "alert": "送信できませんでした"
+  },
+  "Post": {
+    "loading": "読み込み中",
+    "noPost": "投稿はありません",
+    "photo": "写真",
+    "movie": "動画"
+  },
+  "User": {
+    "self": "自分",
+    "loading": "読み込み中",
+    "noPosts": "投稿はありません"
+  },
+  "Tag": {
+    "text": "の投稿一覧"
+  },
+  "Search": {
+    "placeholder": "タグを入力して検索しましょう",
+    "searching": "を検索中"
+  }
+}

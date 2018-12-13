@@ -7,6 +7,7 @@ import {
 } from 'expo';
 
 /* node_modules */
+import I18n from 'ex-react-native-i18n';
 import Sentry from 'sentry-expo';
 
 /* from app */
@@ -43,6 +44,9 @@ export default class App extends React.Component {
 
     /* analytics */
     Analytics.init(Constants.deviceId);
+
+    /* I18n */
+    await I18n.initAsync();
 
     return true;
   }

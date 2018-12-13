@@ -15,15 +15,17 @@ import { Image } from 'react-native-expo-image-cache';
 import Avatar from 'app/src/components/Avatar';
 import FlatList from 'app/src/components/FlatList';
 import Text from 'app/src/components/Text';
-import styles from './styles';
 import firebase from 'app/src/firebase';
+import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
+import styles from './styles';
 
 @connect(state => ({
   me: state.me,
 }))
 export default class UserScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
-    headerTitle: navigation.getParam('title', '読み込み中'),
+    headerTitle: navigation.getParam('title', I18n.t('User.loading')),
   })
 
   constructor(props) {
@@ -43,6 +45,8 @@ export default class UserScreen extends React.Component {
       fetching: false,
       loading: false,
     };
+
+    GA.ScreenHit((me.uid === uid) ? `User/${uid}` : 'Me');
   }
 
   async componentDidMount() {
@@ -51,7 +55,7 @@ export default class UserScreen extends React.Component {
 
     if (self) {
       await this.setState({ user: me });
-      navigation.setParams({ title: '自分' });
+      navigation.setParams({ title: I18n.t('User.self') });
     } else {
       const user = {
         uid: null,

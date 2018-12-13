@@ -1,0 +1,44 @@
+{
+  "Root": {
+    "notification": "New notification",
+    "message": "Check now?"
+  },
+  "Home": {
+    "title": "Feed",
+    "noPosts": "No Posts"
+  },
+  "Notification": {
+    "title": "Notifications",
+    "noNotifications": "No Notifications",
+    "message": " liked your post."
+  },
+  "Take": {
+    "tab1": "Library",
+    "tab2": "Photo",
+    "tab3": "Movie",
+    "noPermission": "No Camera Permission"
+  },
+  "TakePublish": {
+    "title": "Post",
+    "placeholder": "Enter Text",
+    "alert": "Could not send"
+  },
+  "Post": {
+    "loading": "Loading...",
+    "noPost": "Not Found",
+    "photo": "Photo",
+    "movie": "Movie"
+  },
+  "User": {
+    "self": "Me",
+    "loading": "Loading...",
+    "noPosts": "No Posts"
+  },
+  "Tag": {
+    "text": "'s Posts"
+  },
+  "Search": {
+    "placeholder": "Enter The Tag",
+    "searching": " searching..."
+  }
+}

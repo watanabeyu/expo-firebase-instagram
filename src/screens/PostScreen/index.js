@@ -10,11 +10,13 @@ import { WebBrowser } from 'expo';
 import Item from 'app/src/components/Item';
 import Text from 'app/src/components/Text';
 import firebase from 'app/src/firebase';
+import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
 import styles from './styles';
 
 export default class PostScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
-    headerTitle: navigation.getParam('title', '読み込み中'),
+    headerTitle: navigation.getParam('title', I18n.t('Post.loading')),
   })
 
   constructor(props) {
@@ -25,6 +27,10 @@ export default class PostScreen extends React.Component {
       error: false,
       fetching: false,
     };
+
+    const { navigation } = this.props;
+
+    GA.ScreenHit(`Post/${navigation.getParam('pid', 0)}`);
   }
 
   async componentDidMount() {
@@ -36,10 +42,10 @@ export default class PostScreen extends React.Component {
 
     if (!response.error) {
       this.setState({ ...response });
-      navigation.setParams({ title: '投稿' });
+      navigation.setParams({ title: I18n.t(`Post.${response.type}`) });
     } else {
       this.setState({ error: true });
-      navigation.setParams({ title: '投稿が見つかりません。' });
+      navigation.setParams({ title: I18n.t('Post.noPost') });
     }
 
     this.setState({ fetching: false });
@@ -85,7 +91,7 @@ export default class PostScreen extends React.Component {
     if (fetching) {
       return (
         <View style={[styles.container, styles.empty]}>
-          <Text font="noto-sans-bold" style={styles.emptyText}>読み込み中</Text>
+          <Text font="noto-sans-bold" style={styles.emptyText}>{I18n.t('Post.loading')}</Text>
         </View>
       );
     }
@@ -93,7 +99,7 @@ export default class PostScreen extends React.Component {
     if (error) {
       return (
         <View style={[styles.cjontainer, styles.empty]}>
-          <Text font="noto-sans-bold" style={styles.emptyText}>投稿はありません</Text>
+          <Text font="noto-sans-bold" style={styles.emptyText}>{I18n.t('Post.noPost')}</Text>
         </View>
       );
     }

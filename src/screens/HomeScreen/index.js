@@ -16,6 +16,7 @@ import Item from 'app/src/components/Item';
 import Text from 'app/src/components/Text';
 import firebase from 'app/src/firebase';
 import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
 import styles from './styles';
 
 @withNavigationFocus
@@ -24,7 +25,7 @@ import styles from './styles';
 }))
 export default class HomeScreen extends React.Component {
   static navigationOptions = () => ({
-    headerTitle: 'フィード',
+    headerTitle: I18n.t('Home.title'),
   })
 
   constructor(props) {
@@ -139,7 +140,7 @@ export default class HomeScreen extends React.Component {
           style={styles.container}
           contentContainerStyle={[styles.container, styles.empty]}
         >
-          <Text font="noto-sans-bold" style={styles.emptyText}>投稿はありません</Text>
+          <Text font="noto-sans-bold" style={styles.emptyText}>{I18n.t('Home.noPosts')}</Text>
         </ScrollView>
       );
     }

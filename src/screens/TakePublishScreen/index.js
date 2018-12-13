@@ -12,12 +12,14 @@ import { Video } from 'expo';
 /* from app */
 import IconButton from 'app/src/components/IconButton';
 import firebase from 'app/src/firebase';
+import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
 import styles from './styles';
 
 export default class TakePublishScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     headerLeft: <IconButton name="ios-arrow-back" onPress={() => navigation.goBack()} />,
-    headerTitle: '投稿する',
+    headerTitle: I18n.t('TakePublish.title'),
     headerRight: navigation.getParam('headerRight', null),
   })
 
@@ -32,6 +34,8 @@ export default class TakePublishScreen extends React.Component {
       movie: navigation.getParam('movie', {}),
       text: '',
     };
+
+    GA.ScreenHit('TakePublish');
   }
 
   componentDidMount() {
@@ -73,7 +77,7 @@ export default class TakePublishScreen extends React.Component {
     });
 
     if (result.error) {
-      Alert.alert('TakePublish.alert', result.error);
+      Alert.alert(I18n.t('TakePublish.alert'), result.error);
     } else {
       navigation.dispatch({ type: 'TAKEMODAL_CLOSE' });
     }
@@ -104,7 +108,7 @@ export default class TakePublishScreen extends React.Component {
           <TextInput
             multiline
             style={styles.textInput}
-            placeholder="テキストを入力してください"
+            placeholder={I18n.t('TakePublish.placeholder')}
             underlineColorAndroid="transparent"
             textAlignVertical="top"
             value={text}

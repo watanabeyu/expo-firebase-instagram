@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@expo/samples": "2.1.1",
+    "ex-react-native-i18n": "0.0.4",
     "expo": "^30.0.1",
     "expo-analytics": "^1.0.7",
     "firebase": "^5.5.6",

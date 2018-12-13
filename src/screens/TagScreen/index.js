@@ -14,6 +14,8 @@ import { Image } from 'react-native-expo-image-cache';
 import FlatList from 'app/src/components/FlatList';
 import Text from 'app/src/components/Text';
 import firebase from 'app/src/firebase';
+import GA from 'app/src/analytics';
+import I18n from 'app/src/i18n';
 import styles from './styles';
 
 export default class UserScreen extends React.Component {
@@ -34,6 +36,8 @@ export default class UserScreen extends React.Component {
       fetching: false,
       loading: false,
     };
+
+    GA.ScreenHit(`Tag/${tag}`);
   }
 
   async componentDidMount() {
@@ -106,7 +110,7 @@ export default class UserScreen extends React.Component {
           onEndReached={this.onEndReached}
           ListHeaderComponent={() => (
             <View style={styles.header}>
-              <Text font="noto-sans-medium" style={styles.name}>{tag}の投稿一覧</Text>
+              <Text font="noto-sans-medium" style={styles.name}>{`${tag}${I18n.t('Tag.text')}`}</Text>
             </View>
           )}
           renderItem={({ item, index, viewableItemIndices }) => {
