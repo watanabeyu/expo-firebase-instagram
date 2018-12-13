@@ -6,6 +6,8 @@ import {
   Share,
   ActivityIndicator,
 } from 'react-native';
+import { connect } from 'react-redux';
+import { withNavigationFocus } from 'react-navigation';
 import { WebBrowser } from 'expo';
 
 /* from app */
@@ -13,8 +15,13 @@ import FlatList from 'app/src/components/FlatList';
 import Item from 'app/src/components/Item';
 import Text from 'app/src/components/Text';
 import firebase from 'app/src/firebase';
+import GA from 'app/src/analytics';
 import styles from './styles';
 
+@withNavigationFocus
+@connect(state => ({
+  currentScreen: state.screen,
+}))
 export default class HomeScreen extends React.Component {
   static navigationOptions = () => ({
     headerTitle: 'フィード',
@@ -28,6 +35,8 @@ export default class HomeScreen extends React.Component {
       fetching: false,
       loading: false,
     };
+
+    GA.ScreenHit('Home');
   }
 
   async componentDidMount() {
@@ -36,6 +45,10 @@ export default class HomeScreen extends React.Component {
 
   async componentDidUpdate(prevProps) {
     const { isFocused } = this.props;
+
+    if (!prevProps.isFocused && isFocused) {
+      GA.ScreenHit("Home")
+    }
 
     if (!prevProps.isFocused && isFocused && prevProps.currentScreen === 'TakePublish') {
       await this.getPosts();
