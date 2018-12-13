@@ -15,6 +15,7 @@
   "dependencies": {
     "@expo/samples": "2.1.1",
     "expo": "^30.0.1",
+    "expo-analytics": "^1.0.7",
     "firebase": "^5.5.6",
     "linkify-it": "^2.0.3",
     "react": "16.3.1",
