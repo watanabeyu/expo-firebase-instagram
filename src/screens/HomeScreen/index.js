@@ -98,6 +98,8 @@ export default class HomeScreen extends React.Component {
   }
 
   onLikePress = async (item) => {
+    GA.EventHit(`[HOME] Post/${item.pid} like button`, 'press');
+
     const { posts } = this.state;
 
     const response = await firebase.likePost(item);
