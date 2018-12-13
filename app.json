@@ -40,6 +40,10 @@
         "messagingSenderId": "xxxxxxxxxxxxxx"
       }
     },
+    "locales": {
+      "ja": "./languages/ja.json",
+      "en": "./languages/en.json"
+    },
     "hooks": {
       "postPublish": [
         {
