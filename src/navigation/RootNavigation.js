@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, Alert } from 'react-native';
 import { Permissions, Notifications } from 'expo';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
@@ -34,6 +34,8 @@ export default class AppWithNavigationState extends React.Component {
     this.setState({ loading: false });
 
     await this.getDeviceToken();
+
+    Notifications.addListener(this.subscribeNotification);
   }
 
   componentWillUnmount() {
@@ -57,6 +59,34 @@ export default class AppWithNavigationState extends React.Component {
     const deviceToken = await Notifications.getExpoPushTokenAsync();
     if (deviceToken) {
       firebase.updateUserToken(deviceToken);
+    }
+  }
+
+  subscribeNotification = (notification) => {
+    const { dispatch } = this.props;
+    const { data = {} } = notification;
+    const { screen = null } = data;
+
+    if (notification.origin === 'selected') {
+      if (screen) {
+        dispatch(NavigationActions.navigate({ routeName: screen }));
+      }
+    } else if (notification.origin === 'received') {
+      Alert.alert(
+        "新しい通知があります",
+        "今すぐ確認しますか？",
+        [
+          { text: 'No', style: 'cancel' },
+          {
+            text: 'Yes',
+            onPress: () => {
+              if (screen) {
+                dispatch(NavigationActions.navigate({ routeName: screen }));
+              }
+            },
+          },
+        ],
+      );
     }
   }
 
