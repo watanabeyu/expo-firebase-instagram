@@ -145,7 +145,7 @@ export default class HomeScreen extends React.Component {
       );
     }
     return (
-      <View style={styles.container} testID="Home">
+      <View style={styles.container}>
         <FlatList
           data={posts}
           keyExtractor={item => item.key}
