@@ -32,11 +32,23 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.1",
+    "detox": "^7.2.0",
+    "detox-expo-helpers": "^0.2.0",
     "eslint": "^5.7.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-jsx-a11y": "^6.1.2",
     "eslint-plugin-react": "^7.11.1",
-    "jest-expo": "30.0.0"
+    "jest-expo": "30.0.0",
+    "mocha": "^5.2.0"
+  },
+  "detox": {
+    "configurations": {
+      "ios.sim": {
+        "binaryPath": "bin/Exponent-2.7.0.app",
+        "type": "ios.simulator",
+        "name": "iPhone X"
+      }
+    }
   }
 }
