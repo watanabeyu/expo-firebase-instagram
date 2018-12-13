@@ -28,6 +28,7 @@
     },
     "primaryColor": "#000",
     "extra": {
+      "ga": "UA-XXXXXX-X",
       "backgroundColor": "#fafafa",
       "textColor": "#454545",
       "firebase": {
