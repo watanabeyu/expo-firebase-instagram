@@ -7,7 +7,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
-import { Notifications, Video } from 'expo';
+import { Video } from 'expo';
 
 /* node_modules */
 import { Image } from 'react-native-expo-image-cache';
@@ -36,8 +36,6 @@ export default class NotificationScreen extends React.Component {
   }
 
   async componentDidMount() {
-    Notifications.setBadgeNumberAsync(0);
-
     await this.getNotifications();
   }
 
