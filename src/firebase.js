@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Constants } from 'expo';
+import { Constants, DangerZone } from 'expo';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
 
@@ -90,6 +90,22 @@ class Firebase {
       return { error: message };
     }
   }
+
+  updateUserToken = async (deviceToken = null) => {
+    const locale = await DangerZone.Localization.getCurrentLocaleAsync();
+
+    try {
+      this.user.doc(`${this.uid}`).update({
+        deviceToken,
+        locale,
+      });
+
+      return true;
+    } catch ({ message }) {
+      return { error: message };
+    }
+  }
+
 
   createPost = async (text = '', file = '', type = 'photo') => {
     try {
