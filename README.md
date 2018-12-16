@@ -29,8 +29,7 @@ $ npm install
         "projectId": "xxxxxxxxxxxxxxxxxxxxxxxxxx",
         "storageBucket": "xxxxxxxxxxxxxxxxxxxxxxxxxx.appspot.com",
         "messagingSenderId": "xxxxxxxxxxxxxxxxxxxxxxxxxx"
-      },
-      "sentry": "https://xxxxxxxxxxxx@sentry.io/xxxxxxxxx"
+      }
     },
     ...
   }
